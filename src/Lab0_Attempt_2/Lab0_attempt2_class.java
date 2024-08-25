@@ -7,6 +7,7 @@ public class Lab0_attempt2_class
 		{
 			System.out.println("Hello world!");
 			System.out.println("Real G's move in silence like lasagna");
+			System.out.println("Now it works on Linux!");
 		}
 
 }
