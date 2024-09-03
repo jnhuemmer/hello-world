@@ -18,6 +18,16 @@ public class Lab0_attempt2_class
 	 * Question 3
 	 * With the specified custom probabilities, it would be expected that the AAA sequence appears 0.17% of the time
 	 * Generally, the AAA sequence occurs between 0 and 3 times, which is fairly close the what is expected (0% - 0.3%)
+	 * 
+	 * Question 4 (chatGPT question)
+	 * I have never actually used chatGPT for programming before, it's a bit mind boggling how well this seems to work straight out of the box!
+	 * The query I used was "Write me some code in java that will generate a random sequence of DNA nucleotide triplets based upon established probabilities".
+	 * The chatGPT code may be viewed in the Lab1_chatGPT.java class
+	 * I modified the nucleic acid probabilities and sequence length after chatGPT generated all the code and it seemingly worked.
+	 * I read through the code and it should be functioning properly based on that read through (generating a random double and checking the nucleotide range it falls in)
+	 * It was through this that I also realized I could have used random to generate a float to make my code more efficient and I also learned what a stringbuilder is
+	 * To check further I added some of my own code to count AAA triplets to see if the counts looked similar to my results
+	 * Though I did not use a statistical test, eyeballing it with both produced very similar result 
 	 */
 		
 	
