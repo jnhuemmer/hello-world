@@ -52,7 +52,7 @@ public class Lab2_Jacob
 		    else
 		    {
 		    	contGame = false;
-		    	System.out.println("MUAHAHAHAA! WROOONG! The correct answer is " + SHORT_NAMES[amino] + "!");
+		    	System.out.println("\nMUAHAHAHAA! WROOONG! The correct answer is " + SHORT_NAMES[amino] + "!");
 		    }
 		 
 		}
