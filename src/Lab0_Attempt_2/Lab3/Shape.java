@@ -35,7 +35,7 @@ public abstract class Shape implements Comparable<Shape>
 
         // Calculate the coordinates to center the text
         int x = (width - textWidth) / 2;
-        int y = (height - textHeight) / 2 + fm.getAscent();
+        int y = (height - textHeight) + fm.getAscent();
 
         // Draw the text centered
         g2d.drawString(text, x, y);

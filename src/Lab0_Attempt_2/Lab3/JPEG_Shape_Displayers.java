@@ -56,9 +56,9 @@ public class JPEG_Shape_Displayers
 		
 		for( int x=1; x <= 4; x++)
 		{
-			Tesseract ts = new Tesseract(x);
-			ts.setColor(colors[x-1]);
-			list.add(ts);
+			SmileyFace sf = new SmileyFace(60*x);
+			sf.setColor(colors[x-1]);
+			list.add(sf);
 		}
 					
 		ShowImages(list);
