@@ -184,8 +184,28 @@ public class Lab0_attempt2_class
 		
 		// MAIN METHOD
 		public static void main(String[] args) 
-		{
+		{    
+			String bases= "ACGT";
 			
+			Random r = new Random();
+			
+			int numAAAs =0;
+			
+			String outSTring = "";
+			
+			for (int i =0 ; i <1000; i++)
+			{
+
+				for( int x=0; x < 3; x++)
+				{
+					outSTring += bases.charAt(r.nextInt(bases.length()));
+				}
+				
+				if( outSTring.equals("AAA"))
+					numAAAs++;
+		
+			}
+				
 			// Question 1
 			String trackTriplet = "AAA";
 			
