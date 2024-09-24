@@ -24,12 +24,16 @@ public class SmileyFace extends Shape {
 
     @Override
     public double getPerimiter() {
-        return Math.PI * 2 * radius;
+        // Perimeter of a hexagon = 6 * side length
+        double sideLength = radius; // Using radius as the length of each side
+        return 6 * sideLength;
     }
 
     @Override
     public double getArea() {
-        return Math.PI * radius * radius;
+        // Area of a hexagon = (3 * √3 / 2) * side^2
+        double sideLength = radius; // Using radius as the length of each side
+        return (3 * Math.sqrt(3) / 2) * sideLength * sideLength;
     }
 
     public static void main(String[] args) throws Exception {
@@ -39,6 +43,7 @@ public class SmileyFace extends Shape {
 
     @Override
     public void renderAsJpeg(File fileToJpeg) throws Exception {
+        
         // Set the image dimensions
         int width = 256;
         int height = 256;
@@ -53,57 +58,46 @@ public class SmileyFace extends Shape {
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, width, height);
 
-        // Draw the smiley face
+        // Get radius
         double r = this.radius;
 
-        // Draw the face (yellow)
+        // Calculate hexagon vertices
+        int[] xPoints = new int[6];
+        int[] yPoints = new int[6];
+        for (int i = 0; i < 6; i++) {
+            xPoints[i] = (int) (width / 2 + r * Math.cos(i * Math.PI / 3));
+            yPoints[i] = (int) (height / 2 + r * Math.sin(i * Math.PI / 3));
+        }
+
+        // Draw the head (hexagon)
         g2d.setColor(getColor());
-        g2d.fillOval((int)((width - 2 * r) / 2), (int)((height - 2 * r) / 2), (int)(2 * r), (int)(2 * r));
+        g2d.fillPolygon(xPoints, yPoints, 6);
 
-        // Draw the eyes (black)
-        
+        // Set facial feature colors
         if (getColor().equals(Color.BLACK))
-        	g2d.setColor(Color.WHITE);
+            g2d.setColor(Color.WHITE);
         else
-        	g2d.setColor(Color.BLACK);
+            g2d.setColor(Color.BLACK);
 
-        int eyeSize = (int)(r / 10);
-     
-        // Centering the eyes
-        
-        
+        // Get horizontal center
         int centerX = width / 2;
-        
-        int eyeDistanceFromCenter = (int)(r / 4); // You can adjust this value as needed
-        
-        int leftEyeX = centerX - eyeDistanceFromCenter - eyeSize / 2; // Left eye
-        int rightEyeX = centerX + eyeDistanceFromCenter - eyeSize / 2; // Right eye
-        
-        
-        /* We are cooked
-        
-        int leftEyeX = (int)((width - 2 * r) / 2 + (3 * r / 4) - eyeSize / 2); // Left eye remains in place
-        int distanceToCenter = leftEyeX - centerX;
-        int rightEyeX = centerX + Math.abs(distanceToCenter); // Right eye positioned to the right of the left eye
 
-        
-
-        //int eyeDistance = (int)(r / 2); // Distance between eyes
-        //int rightEyeX = leftEyeX + eyeDistance; // Right eye positioned to the right of the left eye
-
-*/
-        
-        // Draw the smile (black) - centered
+        // Draw the smile
         int smileHeight = (int)(r / 5);
-        int smileWidth = (int)(r / 3); // Width of the smile
-        int smileX = centerX - (smileWidth / 2); 
+        int smileWidth = (int)(r / 2); // Width of the smile
+        int smileX = centerX - (smileWidth / 2);
         int smileY = (int)((height - smileHeight) / 2 + r / 4); // Centered vertically
 
+        // Draw the eyes
+        int eyeSize = (int)(r / 10);
+        int eyeDistanceFromCenter = (int)(r / 4); // How far apart the eyes will be
+        int leftEyeX = centerX - eyeDistanceFromCenter - eyeSize / 2; // Left eye
+        int rightEyeX = centerX + eyeDistanceFromCenter - eyeSize / 2; // Right eye
         int eyeY = smileY - eyeSize; // Place the eyes above the mouth
 
         g2d.fillOval(leftEyeX, eyeY, eyeSize, eyeSize);
         g2d.fillOval(rightEyeX, eyeY, eyeSize, eyeSize);
-        
+
         g2d.drawArc(smileX, smileY, smileWidth, smileHeight, 0, -180);
 
         addAuthorText(g2d, width, height);

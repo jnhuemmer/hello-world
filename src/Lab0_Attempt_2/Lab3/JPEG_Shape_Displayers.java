@@ -18,7 +18,7 @@ public class JPEG_Shape_Displayers
 	
 	public static void main(String[] args) throws Exception
 	{
-		Color[] colors = {Color.BLACK, Color.GRAY, Color.GREEN, Color.RED, Color.BLUE}; 
+		Color[] colors = {Color.BLACK, Color.YELLOW, Color.GREEN, Color.RED, Color.BLUE}; 
 		
 		List<Shape> list = new ArrayList<>();
 		
@@ -36,15 +36,7 @@ public class JPEG_Shape_Displayers
 			list.add(t);
 		}
 		
-		/*
-		for( int x=1; x <= 4; x++)
-		{
-			Square sq = new Square(20*x);
-			sq.setColor(colors[x-1]);
-			list.add(sq);
-		}
-		
-		Square
+		/* Square
 		for( int x=1; x <= 4; x++)
 		{
 			Square sq = new Square(20*x);
@@ -52,7 +44,6 @@ public class JPEG_Shape_Displayers
 			list.add(sq);
 		}
 		*/
-		
 		
 		for( int x=1; x <= 4; x++)
 		{
