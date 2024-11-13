@@ -1,21 +1,25 @@
 package Lab6;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.Semaphore;
+import java.util.List;
 
-import java.awt.*;    
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 import javax.swing.*;
-import javax.swing.Timer;
-
-//import javax.swing.*;
 
 public class Lab6PrimeGui extends JFrame
 {
 	private boolean primeRun = false;
 	
 	private int thePrimeNumber = 0;
+	private int numWorkers = 4;
 	
 	private JButton cancelButton = new JButton("Cancel");
 	private JButton startButton = new JButton("Start");
@@ -42,7 +46,9 @@ public class Lab6PrimeGui extends JFrame
 	private final JScrollPane answerList = new JScrollPane(answerPanel);
 	
 	private final JTextField userEntry = new JTextField(10);
-
+	
+	static final List<Integer> primeList = Collections.synchronizedList(new ArrayList<Integer>());
+	
 	private class answerAction implements ActionListener
 	{
 		@Override
@@ -84,6 +90,11 @@ public class Lab6PrimeGui extends JFrame
 
 		frame.add(mainPanel, BorderLayout.CENTER);
 		
+	}
+	
+	public static synchronized void addPrime(int newPrimeNum)
+	{
+		primeList.add(newPrimeNum);
 	}
 	
 	// Checks what the user submits in the answer box, then calculates score and generates a new amino acid
@@ -129,6 +140,7 @@ public class Lab6PrimeGui extends JFrame
 	            JOptionPane.showMessageDialog(null, userInput + " is not an integer."); 
 			}
 		}
+		
 	}
 	
 	// Processes that only need to be done when the game is started up
@@ -172,12 +184,32 @@ public class Lab6PrimeGui extends JFrame
 		
 		// Get User input
 		getPrime();
-		
 		primeRun = true;
 		maxNumber.setText(thePrimeNumber + "");
 		runningLabel.setText("Thinking..."); // Make it so that if the user clicks cancel, this does not change. Maybe while loop for primeRun?
+		System.out.println(primeList);
 		
-		
+		Semaphore semaphore = new Semaphore(numWorkers);
+		for (int i = 2; i < this.thePrimeNumber; i++)
+		{
+		    try 
+		    {
+				semaphore.acquire();
+		        Lab6PrimeWorker worker = new Lab6PrimeWorker(i, semaphore);
+				worker.start();
+		    } 
+		    catch (InterruptedException e) 
+		    { 
+		        System.out.println("Uh oh");
+		        // Set up semaphore.acquire
+		    }
+
+		}
+	}
+	
+	public void updatePrimeList(int primeNum)
+	{
+		this.primeList.add(primeNum);
 	}
 	
 	public static void main(String[] args)
