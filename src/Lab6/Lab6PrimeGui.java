@@ -14,61 +14,50 @@ import java.awt.GridLayout;
 
 import javax.swing.*;
 
+// GUI object for calculating prime numbers in sequence
 public class Lab6PrimeGui extends JFrame
 {
-	private boolean primeRun = false;
+	// Flag will shut off all calculation processes when set to false
+	volatile static boolean primeRun = false;
 	
 	private int thePrimeNumber = 0;
 	private int numWorkers = 4;
 	
-	private JButton cancelButton = new JButton("Cancel");
-	private JButton startButton = new JButton("Start");
+	static final JButton cancelButton = new JButton("Cancel");
+	static final JButton startButton = new JButton("Start");
 	
 	private final JFrame frame = new JFrame();
 	
-	private final JLabel elapsedTime = new JLabel("0 Sec");
-	private final JLabel input = new JLabel("Input: ");
-	private final JLabel maxNumber = new JLabel("0");
-	private final JLabel numberOfPrime = new JLabel("0");
-	private final JLabel primeNumbers = new JLabel ("Numbers:");
-	private final JLabel status = new JLabel ("Status:");
-	private final JLabel runningLabel = new JLabel("Idle");
-	private final JLabel timeElapsed = new JLabel ("Time Elapsed:");
-	
-	private final JOptionPane getInput = new JOptionPane("Enter a large integer:");
-	
-	private final JPanel answerPanel = new JPanel(new FlowLayout());
+	private static final JLabel elapsedTime = new JLabel("0 Secs");
+	private static final JLabel maxNumber = new JLabel("0");
+	private static final JLabel numberOfPrime = new JLabel("0");
+	private static final JLabel runningLabel = new JLabel("Idle");
+		
+	private static final  JPanel answerPanel = new JPanel(); // Box layout
 	private final JPanel buttonBar = new JPanel(new GridLayout(2, 0, 0, 10));
-	private final JPanel infoPanel = new JPanel();
+	private final JPanel infoPanel = new JPanel(); // Box layout
 	private final JPanel mainPanel = new JPanel(new GridLayout(0, 2, 10, 0));
 	private final JPanel runtimeInfoPanel = new JPanel(new GridLayout(4, 2, 0, 0));
 	
-	private final JScrollPane answerList = new JScrollPane(answerPanel);
-	
-	private final JTextField userEntry = new JTextField(10);
-	
+	private final static JScrollPane answerList = new JScrollPane(answerPanel);
+		
 	static final List<Integer> primeList = Collections.synchronizedList(new ArrayList<Integer>());
 	
-	private class answerAction implements ActionListener
+	Lab6PrimeWorkerManager manager = new Lab6PrimeWorkerManager(numWorkers, thePrimeNumber);
+
+	// For cancel button
+	protected class end implements ActionListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			checkAnswer();
+			updateStatus("Canceling...");
+			primeRun = false;
 		}
 	}
 	
-	
-	private class endGame implements ActionListener
-	{
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			gameEnd();
-		}
-	}
-	
-	private class startGame implements ActionListener
+	// For start button
+	private class start implements ActionListener
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
@@ -89,34 +78,26 @@ public class Lab6PrimeGui extends JFrame
 		guiInitialize();
 
 		frame.add(mainPanel, BorderLayout.CENTER);
-		
+		frame.validate(); // To ensure the frame is drawn after initial start
 	}
 	
-	public static synchronized void addPrime(int newPrimeNum)
+	// Orders and puts all found prime numbers into the answer scroll panel
+	public static void fillList()
 	{
-		primeList.add(newPrimeNum);
-	}
-	
-	// Checks what the user submits in the answer box, then calculates score and generates a new amino acid
-	private void checkAnswer()
-	{
-		System.out.println("huh");
+		Collections.sort(primeList);;
+		for (int i : primeList)
+		{
+			answerPanel.add(new JLabel(i + ""));
+		}
+		answerList.updateUI(); // To ensure UI change takes place without needing to resize the window
 	}
 
-	// Ends the game. Occurs when timer expires or if the user clicks "cancel"
-	private void gameEnd()
-	{
-		System.out.println("STOP!");
-		cancelButton.setEnabled(false);
-		startButton.setEnabled(true);
-
-		
-		primeRun = false;
-	}
-	
+	// Queries the user for a number to search for prime numbers under
 	private void getPrime()
 	{
 		boolean askInt = true;
+		
+		// While loop used so that if a user inputs a non-integer they are queried again
 		while (askInt == true)
 		{
 			System.out.println("Clicked start!");
@@ -128,46 +109,52 @@ public class Lab6PrimeGui extends JFrame
 				{
 					askInt = false;
 				}
+				
+				// User enters int
 				else
 				{
 					int tempPrime = Integer.valueOf(userInput);
 					askInt = false;
+					primeRun = true;
 					thePrimeNumber = tempPrime;
 				}
 			}
+			
+			// User enter non-int
 			catch (NumberFormatException e)
 			{
 	            JOptionPane.showMessageDialog(null, userInput + " is not an integer."); 
 			}
 		}
-		
 	}
 	
-	// Processes that only need to be done when the game is started up
+	// Processes that only need to be done when the program is started up
 	private void guiInitialize()
 	{
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+		answerPanel.setLayout(new BoxLayout(answerPanel, BoxLayout.Y_AXIS));
 		
-		runtimeInfoPanel.add(input);
+		runtimeInfoPanel.add(new JLabel("Input: "));
 		runtimeInfoPanel.add(maxNumber);
-		runtimeInfoPanel.add(timeElapsed);
+		runtimeInfoPanel.add(new JLabel ("Time Elapsed:"));
 		runtimeInfoPanel.add(elapsedTime);
-		runtimeInfoPanel.add(primeNumbers);
+		runtimeInfoPanel.add(new JLabel ("Numbers:"));
 		runtimeInfoPanel.add(numberOfPrime);
-		runtimeInfoPanel.add(status);
+		runtimeInfoPanel.add(new JLabel ("Status:"));
 		runtimeInfoPanel.add(runningLabel);
 		
 		infoPanel.add(runtimeInfoPanel);
 		
 		buttonBar.add(startButton);
-		startButton.addActionListener(new startGame());
+		startButton.addActionListener(new start());
 		
 		infoPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		
 		buttonBar.add(cancelButton);
-		cancelButton.addActionListener(new endGame());
+		cancelButton.addActionListener(new end());
+		cancelButton.setEnabled(false);
 		
 		infoPanel.add(buttonBar);
 		
@@ -181,35 +168,50 @@ public class Lab6PrimeGui extends JFrame
 	// Starts the game, meaning the answer box becomes functional and the timer begins ticking
 	private void primeCalcStart()
 	{
-		
 		// Get User input
 		getPrime();
-		primeRun = true;
-		maxNumber.setText(thePrimeNumber + "");
-		runningLabel.setText("Thinking..."); // Make it so that if the user clicks cancel, this does not change. Maybe while loop for primeRun?
-		System.out.println(primeList);
 		
-		Semaphore semaphore = new Semaphore(numWorkers);
-		for (int i = 2; i < this.thePrimeNumber; i++)
+		if (primeRun == true) // For if the user clicked "cancel" in the inputDialogBox
 		{
-		    try 
-		    {
-				semaphore.acquire();
-		        Lab6PrimeWorker worker = new Lab6PrimeWorker(i, semaphore);
-				worker.start();
-		    } 
-		    catch (InterruptedException e) 
-		    { 
-		        System.out.println("Uh oh");
-		        // Set up semaphore.acquire
-		    }
+			// Reset from previous job
+			primeList.clear();
+			resetAnswers();
+			updateNumbers(0);
+			updateStatus("Thinking..."); // Make it so that if the user clicks cancel, this does not change. Maybe while loop for primeRun?
+			maxNumber.setText(thePrimeNumber + "");
 
+			cancelButton.setEnabled(true);
+			startButton.setEnabled(false);
+			manager.updatePrime(thePrimeNumber);
+			
+			// Manages the prime-number calculators
+			Thread managerThread = new Thread(manager);
+			managerThread.start();
+			
 		}
 	}
 	
-	public void updatePrimeList(int primeNum)
+	// Method clears out answer list from previous job
+	public static void resetAnswers()
 	{
-		this.primeList.add(primeNum);
+		answerPanel.removeAll();
+		answerPanel.add(new JLabel("Prime numbers go here"));
+		answerList.validate(); // Ensure UI updates
+	}
+	
+	public static void updateNumbers(int numbers)
+	{
+		numberOfPrime.setText(numbers + "");
+	}
+	
+	public static void updateStatus(String status)
+	{
+		runningLabel.setText(status);
+	}
+	
+	public static void updateTime(String Seconds)
+	{
+		elapsedTime.setText(Seconds);
 	}
 	
 	public static void main(String[] args)
