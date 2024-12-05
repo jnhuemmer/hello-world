@@ -79,6 +79,7 @@ public class Lab6PrimeWorkerManager implements Runnable
 			Lab6PrimeGui.updateStatus("Job Canceled");
 		}
 	 	
+		Lab6PrimeGui.threadControl.setEnabled(true);
 	 	Lab6PrimeGui.startButton.setEnabled(true);
 	 	Lab6PrimeGui.cancelButton.setEnabled(false);
 	}
@@ -86,5 +87,10 @@ public class Lab6PrimeWorkerManager implements Runnable
 	public void updatePrime(int newPrimeNum)
 	{
 		this.thePrimeNumber = newPrimeNum;
+	}
+	
+	public void updateWorkers(int newWorkers)
+	{
+		this.numWorkers = newWorkers;
 	}
 }
